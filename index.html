@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Scrambler - Encryption Tool</title>
+
+  <!-- External CSS -->
+  <link rel="stylesheet" href="./assets/css/style.css" />
+
+  <!-- CryptoJS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+</head>
+
+<body>
+  <header>
+    <a href="#" class="logo" onclick="showPage('home', event)">Scrambler</a>
+
+    <div class="header-right">
+      <nav>
+        <a href="#" onclick="showPage('home', event)" class="active">Home</a>
+        <a href="#" onclick="showPage('text-encrypt', event)">Text Encrypt</a>
+        <a href="#" onclick="showPage('text-decrypt', event)">Text Decrypt</a>
+        <a href="#" onclick="showPage('file-encrypt', event)">File Encrypt</a>
+        <a href="#" onclick="showPage('hash', event)">Hash</a>
+      </nav>
+
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"></button>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- ✅ HOME PAGE -->
+    <div id="home" class="page">
+      <div class="hero">
+        <h1>Welcome to Scrambler</h1>
+        <p>Advanced encryption and decryption made simple and secure</p>
+      </div>
+
+      <div class="features">
+        <div class="feature-card">
+          <div class="feature-icon">🔐</div>
+          <h3>Multiple Algorithms</h3>
+          <p>Support for AES, DES, TripleDES, Base64 and more</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📄</div>
+          <h3>File Encryption</h3>
+          <p>Encrypt and decrypt files of any type securely</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔑</div>
+          <h3>Key Generator</h3>
+          <p>Generate secure random encryption keys instantly</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🌓</div>
+          <h3>Dark Mode</h3>
+          <p>Beautiful dark theme for night use</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Fast & Secure</h3>
+          <p>Client-side encryption ensuring full privacy</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">💾</div>
+          <h3>Download Results</h3>
+          <p>Save encrypted or decrypted files easily</p>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ✅ TEXT ENCRYPT PAGE -->
+    <div id="text-encrypt" class="page hidden">
+      <div class="card">
+        <h2>Text Encryption</h2>
+
+        <div class="form-group">
+          <label>Select Algorithm</label>
+          <select id="encrypt-algo">
+            <option value="AES">AES (PBKDF2 + CBC)</option>
+            <option value="DES">DES</option>
+            <option value="TripleDES">TripleDES</option>
+            <option value="Base64">Base64</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Enter Text</label>
+          <textarea id="encrypt-input" placeholder="Type text here..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Encryption Key</label>
+          <input type="text" id="encrypt-key" placeholder="Enter secret key">
+          <button class="btn btn-secondary" onclick="generateKey('encrypt-key')" style="margin-top:6px">Generate Random Key</button>
+        </div>
+
+        <button class="btn" id="btn-encrypt-text" onclick="encryptText()">Encrypt</button>
+        <button class="btn btn-secondary" onclick="copyOutput('encrypt-output')">Copy</button>
+
+        <div class="output-area" id="encrypt-output">Encrypted text will appear here...</div>
+      </div>
+    </div>
+
+
+    <!-- ✅ TEXT DECRYPT PAGE -->
+    <div id="text-decrypt" class="page hidden">
+      <div class="card">
+        <h2>Text Decryption</h2>
+
+        <div class="form-group">
+          <label>Select Algorithm</label>
+          <select id="decrypt-algo">
+            <option value="AES">AES</option>
+            <option value="DES">DES</option>
+            <option value="TripleDES">TripleDES</option>
+            <option value="Base64">Base64</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Encrypted Text</label>
+          <textarea id="decrypt-input" placeholder="Paste encrypted text..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Decryption Key</label>
+          <input type="text" id="decrypt-key" placeholder="Enter secret key">
+        </div>
+
+        <button class="btn" id="btn-decrypt-text" onclick="decryptText()">Decrypt</button>
+        <button class="btn btn-secondary" onclick="copyOutput('decrypt-output')">Copy</button>
+
+        <div class="output-area" id="decrypt-output">Decrypted text will appear here...</div>
+      </div>
+    </div>
+
+
+    <!-- ✅ FILE ENCRYPT PAGE -->
+    <div id="file-encrypt" class="page hidden">
+      <div class="card">
+        <h2>File Encryption</h2>
+
+        <div class="form-group">
+          <label>Select Algorithm</label>
+          <select id="file-algo">
+            <option value="AES">AES (PBKDF2)</option>
+            <option value="DES">DES</option>
+            <option value="TripleDES">TripleDES</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Select File</label>
+          <div id="dropzone" class="file-upload">
+            <input type="file" id="file-input">
+            <p id="file-name">Click to select file or drag & drop</p>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Key</label>
+          <input type="text" id="file-key" placeholder="Enter secret key">
+          <button class="btn btn-secondary" onclick="generateKey('file-key')" style="margin-top:6px">Generate Random Key</button>
+        </div>
+
+        <button class="btn" id="btn-encrypt-file" onclick="encryptFile()">Encrypt File</button>
+        <button class="btn" id="btn-decrypt-file" onclick="decryptFile()">Decrypt File</button>
+        <button class="btn btn-secondary" id="btn-download-file" onclick="downloadFile()">Download</button>
+
+        <div class="output-area" id="file-output">File processing result will appear here...</div>
+      </div>
+    </div>
+
+
+    <!-- ✅ HASH PAGE -->
+    <div id="hash" class="page hidden">
+      <div class="card">
+        <h2>Hash Generator</h2>
+
+        <div class="form-group">
+          <label>Select Hash Algorithm</label>
+          <select id="hash-algo">
+            <option value="SHA256">SHA-256</option>
+            <option value="SHA512">SHA-512</option>
+            <option value="SHA1">SHA-1</option>
+            <option value="MD5">MD5</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Enter Text</label>
+          <textarea id="hash-input" placeholder="Enter text"></textarea>
+        </div>
+
+        <button class="btn" onclick="generateHash()">Generate Hash</button>
+        <button class="btn btn-secondary" onclick="copyOutput('hash-output')">Copy</button>
+
+        <div class="output-area" id="hash-output">Hash will appear here...</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast">Copied to clipboard</div>
+
+  <!-- ✅ JS FILES (Correct paths) -->
+  <script src="./assets/js/utils.js"></script>
+  <script src="./assets/js/aes.js"></script>
+  <script src="./assets/js/ui.js"></script>
+  <script src="./assets/js/fileHandler.js"></script>
+  <script src="./assets/js/main.js"></script>
+
+</body>
+</html>
